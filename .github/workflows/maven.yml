@@ -27,6 +27,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
         cache: maven
-    - name: Test with Maven
-      run: mvn -B test --file FormulaOneDrivers/pom.xml
 
+    - name: Clean and Build with Maven
+      run: mvn clean package --file FormulaOneDrivers/pom.xml
+
+    - name: Test with Maven
+      run: mvn test --file FormulaOneDrivers/pom.xml
