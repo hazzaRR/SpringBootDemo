@@ -25,25 +25,27 @@ public class ConstructorController {
         return constructorService.getConstructors();
     }
 
-    @GetMapping
+    @GetMapping(params = "headquarters")
+    public List<Constructor> getConstructorsByHeadquarters(@RequestParam String headquarters) {
+        return constructorService.getConstructorsByHeadquarters(headquarters);
+    }
+
+    @GetMapping(path = "code")
     public Optional<Constructor> getConstructorByCode(@RequestParam String code) {
         return constructorService.getConstructorByCode(code);
     }
 
     @PostMapping
-
     public void addNewConstructor(@RequestBody Constructor constructor) {
         constructorService.addConstructor(constructor);
     }
 
-
-    @DeleteMapping
+    @DeleteMapping(params = "id")
     public void deleteConstructor(@RequestParam long id) {
         constructorService.deleteConstructor(id);
     }
 
     @PutMapping(path="{constructorID}")
-
     public void updateConstructor(@PathVariable("constructorID") long id, @RequestParam(required = false) String name, @RequestParam(required = false) String constructor_code, @RequestParam(required = false) String headquarters) {
         constructorService.updateConstructor(id, name, constructor_code, headquarters);
     }

@@ -69,4 +69,8 @@ public class ConstructorService {
     public Optional<Constructor> getConstructorByCode(String code) {
         return constructorRepository.findByConstructorCode(code);
     }
+
+    public List<Constructor> getConstructorsByHeadquarters(String headquarters) {
+        return constructorRepository.findByHeadquarters(headquarters);
+    }
 }
