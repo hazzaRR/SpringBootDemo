@@ -56,4 +56,21 @@ class DriverRepositoryTest {
         assertThat(result).extracting(Driver::getName).containsExactlyInAnyOrder("Lewis Hamilton", "George Russell");
     }
 
+    @Test
+    void FindByTeamThatDoesnotExist() {
+        //given
+
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+
+        constructorRepository.save(mercedes);
+
+        //when
+
+        List<Driver> result = underTest.findDriversByConstructor(mercedes.getId());
+
+        //then
+
+        assertThat(result).isEmpty();
+    }
+
 }

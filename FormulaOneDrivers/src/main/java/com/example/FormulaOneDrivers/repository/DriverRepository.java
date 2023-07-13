@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface DriverRepository extends JpaRepository<Driver, Long> {
 
-    @Query(value = "SELECT d.* FROM Driver d INNER JOIN Constructor c ON c.id = d.team_id WHERE d.team_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM Driver d WHERE d.team_id = ?1", nativeQuery = true)
     List<Driver> findDriversByConstructor(Long constructorId);
 
 }
