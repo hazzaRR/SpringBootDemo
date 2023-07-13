@@ -11,16 +11,7 @@ import jakarta.persistence.*;
 )
 public class Constructor {
     @Id
-    @SequenceGenerator(
-            name = "constructor_sequence",
-            sequenceName = "constructor_sequence",
-            allocationSize = 1
-    )
-
-    @GeneratedValue(
-            strategy = GenerationType.SEQUENCE,
-            generator = "constructor_sequence"
-    )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
     @Column(
