@@ -1,22 +1,31 @@
 package com.example.FormulaOneDrivers.service;
 
+import com.example.FormulaOneDrivers.dto.DriverDTO;
+import com.example.FormulaOneDrivers.exceptions.ConstructorNotFoundException;
+import com.example.FormulaOneDrivers.exceptions.RacingNumberAlreadyTakenException;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.model.Driver;
 import com.example.FormulaOneDrivers.repository.ConstructorRepository;
 import com.example.FormulaOneDrivers.repository.DriverRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+@Service
 public class DriverService {
 
 
     private DriverRepository driverRepository;
+    private ConstructorRepository constructorRepository;
 
-    public DriverService(DriverRepository driverRepository) {
+    public DriverService(DriverRepository driverRepository, ConstructorRepository constructorRepository) {
         this.driverRepository = driverRepository;
+        this.constructorRepository = constructorRepository;
     }
     public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
@@ -62,4 +71,21 @@ public class DriverService {
     }
 
     }
+
+    public void addDriver(DriverDTO driverDTO) {
+
+        Constructor constructor = constructorRepository.findById(driverDTO.getTeamId())
+                .orElseThrow(() -> new ConstructorNotFoundException("Constructor does not exist"));
+
+        Optional<Driver> driverOptional = driverRepository.findByRacingNumber(driverDTO.getRacingNumber());
+        if (driverOptional.isPresent()) {
+            throw new RacingNumberAlreadyTakenException("Racing Number is already taken");
+        }
+
+        Driver newDriver = new Driver(driverDTO.getFirstname(), driverDTO.getSurname(), driverDTO.getRacingNumber(), LocalDate.parse(driverDTO.getDob()), constructor);
+
+        driverRepository.save(newDriver);
+    }
+
+
 }

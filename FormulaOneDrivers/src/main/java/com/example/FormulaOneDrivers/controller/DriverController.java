@@ -1,5 +1,6 @@
 package com.example.FormulaOneDrivers.controller;
 
+import com.example.FormulaOneDrivers.dto.DriverDTO;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.model.Driver;
 import com.example.FormulaOneDrivers.service.DriverService;
@@ -26,9 +27,9 @@ public class DriverController {
         return driverService.getAllDrivers();
     }
 
-    @GetMapping
-    public List<Driver> getDriversFromTeam(@RequestParam long constructorID) {
-        return driverService.getDriversFromTeam(constructorID);
+    @GetMapping("/api/v1/driver/{teamId}") // Mapping for getDriversFromTeam method
+    public List<Driver> getDriversFromTeam(@PathVariable long teamId) {
+        return driverService.getDriversFromTeam(teamId);
     }
 
     @DeleteMapping(path="{driverID}")
@@ -39,5 +40,11 @@ public class DriverController {
     @PutMapping(path="{driverID}")
     public void updateDriver(@PathVariable("driverID") long driverID, @RequestParam(required = false) String firstname, @RequestParam(required = false) String surname, @RequestParam(required = false) Integer racingNumber, @RequestParam(required = false) Constructor team) {
         driverService.updateDriver(driverID, firstname, surname, racingNumber, team);
+    }
+
+    @PostMapping
+    public void addDriver(@RequestBody DriverDTO driverDTO) {
+
+        driverService.addDriver(driverDTO);
     }
 }
