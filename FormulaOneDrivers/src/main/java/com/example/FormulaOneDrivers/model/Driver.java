@@ -19,6 +19,9 @@ public class Driver {
     @Column(name = "surname")
     private String surname;
 
+    @Column(name = "racing_number", unique = true, nullable = false)
+    private int racingNumber;
+
     @Column(name = "dob", nullable = false)
     private LocalDate dob;
 
@@ -32,9 +35,10 @@ public class Driver {
     protected Driver() {
     }
 
-    public Driver(String firstname, String surname, LocalDate dob, Constructor team) {
+    public Driver(String firstname, String surname, int racingNumber, LocalDate dob, Constructor team) {
         this.firstname = firstname;
         this.surname = surname;
+        this.racingNumber = racingNumber;
         this.dob = dob;
         this.team = team;
     }
@@ -63,6 +67,13 @@ public class Driver {
         return surname;
     }
 
+    public void setRacingNumber(int racingNumber) {
+        this.racingNumber = racingNumber;
+    }
+
+    public int getRacingNumber() {
+        return racingNumber;
+    }
     public void setSurname(String surname) {
         this.surname = surname;
     }
