@@ -44,7 +44,6 @@ public class DriverController {
 
     @PostMapping
     public void addDriver(@RequestBody DriverDTO driverDTO) {
-
         driverService.addDriver(driverDTO);
     }
 }

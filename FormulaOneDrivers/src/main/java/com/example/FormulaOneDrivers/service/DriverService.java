@@ -27,6 +27,11 @@ public class DriverService {
         this.driverRepository = driverRepository;
         this.constructorRepository = constructorRepository;
     }
+    public DriverService(DriverRepository driverRepository) {
+        this.driverRepository = driverRepository;
+    }
+
+
     public List<Driver> getAllDrivers() {
         return driverRepository.findAll();
     }
