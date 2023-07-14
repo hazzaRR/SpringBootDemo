@@ -2,6 +2,7 @@ package com.example.FormulaOneDrivers.service;
 
 import com.example.FormulaOneDrivers.dto.DriverDTO;
 import com.example.FormulaOneDrivers.exceptions.ConstructorNotFoundException;
+import com.example.FormulaOneDrivers.exceptions.DriverNotFoundException;
 import com.example.FormulaOneDrivers.exceptions.RacingNumberAlreadyTakenException;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.model.Driver;
@@ -27,9 +28,6 @@ public class DriverService {
         this.driverRepository = driverRepository;
         this.constructorRepository = constructorRepository;
     }
-    public DriverService(DriverRepository driverRepository) {
-        this.driverRepository = driverRepository;
-    }
 
 
     public List<Driver> getAllDrivers() {
@@ -42,10 +40,10 @@ public class DriverService {
 
     public void deleteDriver(long driverID) {
 
-        Optional<Driver> driverById = driverRepository.findById(driverID);
+        Optional<Driver> optionalDriver = driverRepository.findById(driverID);
 
-        if (driverById.isEmpty()) {
-            throw new IllegalStateException("No driver with that id");
+        if (optionalDriver.isEmpty()) {
+            throw new DriverNotFoundException("No driver exists with that id");
         }
         driverRepository.deleteById(driverID);
     }
@@ -67,7 +65,7 @@ public class DriverService {
     if (racingNumber != null && !Objects.equals(driver.getRacingNumber(), racingNumber)) {
         Optional<Driver> driverOptional = driverRepository.findByRacingNumber(racingNumber);
         if (driverOptional.isPresent()) {
-            throw new IllegalStateException("Racing Number is already taken");
+            throw new RacingNumberAlreadyTakenException("Racing Number is already taken");
         }
         driver.setRacingNumber(racingNumber);
     }

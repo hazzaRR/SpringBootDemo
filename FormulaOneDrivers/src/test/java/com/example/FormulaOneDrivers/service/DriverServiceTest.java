@@ -2,11 +2,13 @@ package com.example.FormulaOneDrivers.service;
 
 import com.example.FormulaOneDrivers.dto.DriverDTO;
 import com.example.FormulaOneDrivers.exceptions.ConstructorNotFoundException;
+import com.example.FormulaOneDrivers.exceptions.DriverNotFoundException;
 import com.example.FormulaOneDrivers.exceptions.RacingNumberAlreadyTakenException;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.model.Driver;
 import com.example.FormulaOneDrivers.repository.ConstructorRepository;
 import com.example.FormulaOneDrivers.repository.DriverRepository;
+import org.checkerframework.checker.units.qual.C;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,10 +20,10 @@ import org.springframework.data.jpa.repository.support.SimpleJpaRepository;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static java.time.Month.AUGUST;
-import static java.time.Month.MARCH;
+import static java.time.Month.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class) //this does the same as the commented out sections
@@ -59,7 +61,40 @@ class DriverServiceTest {
     }
 
     @Test
-    void deleteDriver() {
+    void CanDeleteDriver() {
+
+        long id = 2;
+
+        Constructor merecedes = new Constructor("MERC", "Mercedes", "UK");
+
+        when(driverRepository.findById(id))
+                .thenReturn(Optional.of(new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), merecedes)));
+
+        underTest.deleteDriver(id);
+
+        //when
+        //then
+
+        verify(driverRepository).deleteById(id);
+    }
+    @Test
+    void CannotDeleteDriver() {
+
+        when(driverRepository.findById(anyLong()))
+                .thenReturn(Optional.empty());
+
+        // Call the method and assert the exception
+        DriverNotFoundException exception = assertThrows(DriverNotFoundException.class, () -> {
+            underTest.deleteDriver(anyLong());
+        });
+
+        // Verify interactions
+        verify(driverRepository, times(1)).findById(anyLong());
+        verify(driverRepository, never()).deleteById(anyLong());
+
+        // Verify the exception message
+        assertThat(exception.getMessage()).isEqualTo("No driver exists with that id");
+
     }
 
     @Test
