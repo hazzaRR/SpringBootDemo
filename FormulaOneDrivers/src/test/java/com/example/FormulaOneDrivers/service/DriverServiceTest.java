@@ -58,6 +58,11 @@ class DriverServiceTest {
 
     @Test
     void getDriversFromTeam() {
+
+        underTest.getDriversFromTeam(anyLong());
+
+        //then
+        verify(driverRepository).findDriversByConstructor(anyLong());
     }
 
     @Test
@@ -65,10 +70,10 @@ class DriverServiceTest {
 
         long id = 2;
 
-        Constructor merecedes = new Constructor("MERC", "Mercedes", "UK");
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
 
         when(driverRepository.findById(id))
-                .thenReturn(Optional.of(new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), merecedes)));
+                .thenReturn(Optional.of(new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes)));
 
         underTest.deleteDriver(id);
 
@@ -98,8 +103,95 @@ class DriverServiceTest {
     }
 
     @Test
-    void updateDriver() {
+    public void testUpdateDriver_UpdateFirstName() {
+        // Arrange
+        long driverID = 1;
+        String newFirstName = "John";
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+        Driver existingDriver = new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes);
+        existingDriver.setFirstname("Jane");
+        when(driverRepository.findById(driverID)).thenReturn(Optional.of(existingDriver));
+
+        // Act
+        underTest.updateDriver(driverID, newFirstName, null, null, null);
+
+        // Assert
+        assertThat(existingDriver.getFirstname()).isEqualTo(newFirstName);
     }
+
+    @Test
+    public void testUpdateDriver_UpdateSurname() {
+        // Arrange
+        long driverID = 1;
+        String newSurname = "Doe";
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+        Driver existingDriver = new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes);
+        existingDriver.setSurname("Smith");
+        when(driverRepository.findById(driverID)).thenReturn(Optional.of(existingDriver));
+
+        // Act
+        underTest.updateDriver(driverID, null, newSurname, null, null);
+
+        // Assert
+        assertThat(existingDriver.getSurname()).isEqualTo(newSurname);
+    }
+
+    @Test
+    public void testUpdateDriver_UpdateRacingNumber() {
+        // Arrange
+        long driverID = 1;
+        int newRacingNumber = 10;
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+        Driver existingDriver = new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes);
+        existingDriver.setRacingNumber(5);
+        when(driverRepository.findById(driverID)).thenReturn(Optional.of(existingDriver));
+        when(driverRepository.findByRacingNumber(newRacingNumber)).thenReturn(Optional.empty());
+
+        // Act
+        underTest.updateDriver(driverID, null, null, newRacingNumber, null);
+
+        // Assert
+        assertThat(existingDriver.getRacingNumber()).isEqualTo(newRacingNumber);
+    }
+
+    @Test
+    public void testUpdateDriver_RacingNumberAlreadyTaken() {
+        // Arrange
+        long driverID = 1;
+        int newRacingNumber = 10;
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+        Driver existingDriver = new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes);
+        existingDriver.setRacingNumber(5);
+        when(driverRepository.findById(driverID)).thenReturn(Optional.of(existingDriver));
+        when(driverRepository.findByRacingNumber(newRacingNumber)).thenReturn(Optional.of(existingDriver));
+
+        // Call the method and assert the exception
+        RacingNumberAlreadyTakenException exception = assertThrows(RacingNumberAlreadyTakenException.class, () -> {
+            underTest.updateDriver(driverID, null, null, newRacingNumber, null);
+        });
+
+        assertThat(exception.getMessage()).isEqualTo("Racing Number is already taken");
+
+    }
+
+    @Test
+    public void testUpdateDriver_UpdateTeam() {
+        // Arrange
+        long driverID = 1;
+        Constructor newTeam = new Constructor("FERR", "Ferrari", "IT");
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+        Driver existingDriver = new Driver("Lewis", "Hamilton", 44, LocalDate.of(1988, MAY, 16), mercedes);
+        existingDriver.setTeam(null);
+        when(driverRepository.findById(driverID)).thenReturn(Optional.of(existingDriver));
+
+        // when
+        underTest.updateDriver(driverID, null, null, null, newTeam);
+
+        // then
+        assertThat(existingDriver.getTeam()).isEqualTo(newTeam);
+    }
+
+
 
     @Test
     void CanAddNewDriver() {
