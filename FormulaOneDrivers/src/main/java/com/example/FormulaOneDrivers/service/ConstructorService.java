@@ -1,5 +1,6 @@
 package com.example.FormulaOneDrivers.service;
 
+import com.example.FormulaOneDrivers.exceptions.ConstructorCodeAlreadyTakenException;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.repository.ConstructorRepository;
 import jakarta.transaction.Transactional;
@@ -25,7 +26,7 @@ public class ConstructorService {
 
         Optional<Constructor> constructorOptional = constructorRepository.findByConstructorCode(constructor.getConstructorCode());
         if (constructorOptional.isPresent()) {
-            throw new IllegalStateException("Constructor Code already in use");
+            throw new ConstructorCodeAlreadyTakenException("Constructor Code already in use");
         }
         constructorRepository.save(constructor);
     }
