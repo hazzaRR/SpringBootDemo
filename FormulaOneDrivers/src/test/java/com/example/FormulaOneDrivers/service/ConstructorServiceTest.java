@@ -92,7 +92,32 @@ class ConstructorServiceTest {
     }
 
     @Test
-    void deleteConstructor() {
+    void CanDeleteConstructor() {
+
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+
+        when(constructorRepository.findById(anyLong())).thenReturn(Optional.of(mercedes));
+
+        underTest.deleteConstructor(anyLong());
+
+        verify(constructorRepository, times(1)).findById(anyLong());
+        verify(constructorRepository, times(1)).deleteById(anyLong());
+    }
+
+    void CanNotDeleteConstructor() {
+
+        Constructor mercedes = new Constructor("MERC", "Mercedes", "UK");
+
+        when(constructorRepository.findById(anyLong())).thenReturn(Optional.empty());
+
+        ConstructorNotFoundException exception = assertThrows(ConstructorNotFoundException.class, () -> {
+            underTest.deleteConstructor(anyLong());
+        });
+
+        verify(constructorRepository, times(1)).findById(anyLong());
+        verify(constructorRepository, never()).deleteById(anyLong());
+
+        assertThat(exception.getMessage()).isEqualTo("No constructor with that id");
     }
 
     @Test
