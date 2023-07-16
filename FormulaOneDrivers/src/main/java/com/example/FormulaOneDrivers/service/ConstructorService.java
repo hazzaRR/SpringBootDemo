@@ -1,6 +1,7 @@
 package com.example.FormulaOneDrivers.service;
 
 import com.example.FormulaOneDrivers.exceptions.ConstructorCodeAlreadyTakenException;
+import com.example.FormulaOneDrivers.exceptions.ConstructorNotFoundException;
 import com.example.FormulaOneDrivers.model.Constructor;
 import com.example.FormulaOneDrivers.repository.ConstructorRepository;
 import jakarta.transaction.Transactional;
@@ -44,7 +45,7 @@ public class ConstructorService {
     @Transactional
     public void updateConstructor(long id, String name, String constructorCode, String headquarters) {
 
-        Constructor constructor = constructorRepository.findById(id).orElseThrow(() -> new IllegalStateException(
+        Constructor constructor = constructorRepository.findById(id).orElseThrow(() -> new ConstructorNotFoundException(
                 "constructor with id " + id + " does not exist"
         ));
 
@@ -56,7 +57,7 @@ public class ConstructorService {
 
             Optional<Constructor> constructorOptional = constructorRepository.findByConstructorCode(constructorCode);
             if (constructorOptional.isPresent()) {
-                throw new IllegalStateException("Constructor Code already in use");
+                throw new ConstructorCodeAlreadyTakenException("Constructor Code already in use");
             }
             constructor.setConstructorCode(constructorCode);
         }
